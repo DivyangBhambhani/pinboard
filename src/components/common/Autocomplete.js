@@ -15,7 +15,6 @@ const suggestions = [
 ];
 
 function renderInput(inputProps) {
-    console.log(inputProps,'renderinput')
     const { InputProps, classes, ref, ...other } = inputProps;
 
     return (
@@ -34,7 +33,6 @@ function renderInput(inputProps) {
 }
 
 function renderSuggestion(suggestionProps) {
-    console.log(suggestionProps,'rendersuggestion')
     const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps;
     const isHighlighted = highlightedIndex === index;
     const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
@@ -61,8 +59,6 @@ renderSuggestion.propTypes = {
 };
 
 function getSuggestions(value, { showEmpty = false } = {}) {
-    console.log(value,'getsuggestion')
-    console.log({ showEmpty = false } = {},'getsuggestion1')
     const inputValue = deburr(value.trim()).toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
@@ -117,7 +113,7 @@ export default function Autocomplete(props) {
 
     return (
         <div className={classes.root}>
-            <Downshift id="downshift-simple" initialSelectedItem={props.user.displayName} onChange={props.onStateChange}>
+            <Downshift id="downshift-simple" onChange={props.onStateChange}>
                 {({
                     getInputProps,
                     getItemProps,

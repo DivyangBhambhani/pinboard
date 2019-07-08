@@ -113,7 +113,7 @@ export default function Header (props) {
                     PinBoard.
                 </Typography>
                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.alignRight}>
-                    {prop.user.displayName}
+                    {props.user && prop.user.displayName}
                 </Typography>
                 <IconButton color="inherit">
                     <Badge badgeContent={4} color="secondary">

@@ -4,11 +4,12 @@ import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 import Landing from './Landing';
 import Login from './Login';
 import Loading from './common/Loading';
+import PinView from './dashboard/pin/PinView';
 import SignUp from './SignUp';
 import Home from './dashboard/Home';
 import firebaseApp from '../config/firebaseConfig';
 import history from './history';
-import Pins from './Pins';
+import Pins from './dashboard/pin/Pins';
 
 const PrivateRoute = ({ component: Component, userObj, isAuthed, ...rest }) => (
   <Route {...rest} render={function(props) {
@@ -73,7 +74,8 @@ class App extends React.Component {
                         <Route path = '/login' render={(props) => <Login {...props} isAuthed={auth} />} />
                         <Route path = '/signup' render={(props) => <SignUp {...props} isAuthed={auth} />} />
                         <PrivateRoute path='/home' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Home} />
-                        <PrivateRoute path='/pins' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Pins} />
+                        <PrivateRoute exact path='/pins' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Pins} />
+                        <PrivateRoute path='/pins/:id' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={PinView} />
                         <Route render = {() => (<p>Not Found</p>) } />
                     </Switch>
                 </BrowserRouter>

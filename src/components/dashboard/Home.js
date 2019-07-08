@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import PinFormDrawer from '../PinFormDrawer';
+import PinFormDrawer from './pin/PinFormDrawer';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import ImgMediaCard from '../common/ImgMediaCard'
@@ -21,16 +21,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function Dashboard(props) {
     const classes = useStyles();
-    const [type, setType] = useState(null)
+    const [pin, setPin] = useState(null)
     const [pinFormDrawer, setPinFormDrawer] = useState(false)
     
-    const openPinDrawerForm = (type) => {
-        setType(type)
+    const openPinDrawerForm = (pin) => {
+        setPin(pin)
         setPinFormDrawer(true)
     }
     
     const closePinDrawerForm = () => {
-        setType(null)
+        setPin(null)
         setPinFormDrawer(false)
     }
 
@@ -38,7 +38,7 @@ export default function Dashboard(props) {
         this.logout();
         props.history.push('/login');
     }
-  
+
     return (
         <div>
         <Header props={props}>
@@ -48,37 +48,46 @@ export default function Dashboard(props) {
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} lg={2}>
                             <ImgMediaCard 
-                                onClickDrawerAction={() => openPinDrawerForm("Code Snippet")} 
+                                openDrawer={() => openPinDrawerForm({type: "Code Snippet"})} 
                                 img="/img/code.png"
-                                title="Pin a Code Snippet">
+                                user={props.user}
+                                title="Pin a Code Snippet"
+                                type="smartAction">
                             </ImgMediaCard>
                         </Grid>
                         <Grid item xs={12} sm={6} lg={2}>
                             <ImgMediaCard 
-                                onClickDrawerAction={() => openPinDrawerForm("Component")} 
+                                openDrawer={() => openPinDrawerForm({type: "Component"})} 
                                 img="/img/component.png"
-                                title="Pin a Component">
+                                user={props.user}
+                                title="Pin a Component"
+                                type="smartAction">
                             </ImgMediaCard>
                         </Grid>
                         <Grid item xs={12} sm={6} lg={2}>
                             <ImgMediaCard 
-                                onClickDrawerAction={() => openPinDrawerForm("Task List")} 
+                                openDrawer={() => openPinDrawerForm({type: "Task List"})} 
                                 img="/img/task.png"
-                                title="Pin a Task List">
+                                user={props.user}
+                                title="Pin a Task List"
+                                type="smartAction">
                             </ImgMediaCard>
                         </Grid>
                         <Grid item xs={12} sm={6} lg={2}>
                             <ImgMediaCard 
-                                onClickDrawerAction={() => openPinDrawerForm("Notes")} 
+                                openDrawer={() => openPinDrawerForm({type: "Notes"})} 
                                 img="/img/notes.png"
-                                title="Pin a Note">
+                                user={props.user}
+                                title="Pin a Note"
+                                type="smartAction">
                             </ImgMediaCard>
                         </Grid>
                     </Grid>
                     <PinFormDrawer 
                         openPinDrawer={pinFormDrawer}
-                        pinType={type}
-                        onClickDrawerAction={openPinDrawerForm} 
+                        pinObj={pin}
+                        mode="add"
+                        openDrawer={openPinDrawerForm} 
                         onClickDrawerClose={closePinDrawerForm}
                         user={props.user}
                     />

@@ -1,7 +1,9 @@
 import React from 'react';
 import Editor, { createEditorStateWithText, createEmpty } from 'draft-js-plugins-editor';
+import {EditorState} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
 import 'draft-js-static-toolbar-plugin/lib/plugin.css';
+import {stateFromHTML} from 'draft-js-import-html';
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
 import {
   ItalicButton,
@@ -24,10 +26,20 @@ const plugins = [toolbarPlugin];
 const text = 'Enter your code snippet and related information here...';
 
 export default class DraftTextEditor extends React.Component {
-    state = {
-        editorState: createEditorStateWithText(text),
-      };
+    constructor(props) {
+        super(props)
+        this.state = {
+            editorState: createEditorStateWithText(text),
+        };
+    }
     
+    componentDidMount() {
+        if(this.props && this.props.value != '') {
+                this.setState({
+                editorState: EditorState.createWithContent(stateFromHTML(this.props.value))
+            })
+        }
+    }
     onChange = (editorState) => {
         this.setState({
           editorState,
@@ -41,10 +53,11 @@ export default class DraftTextEditor extends React.Component {
         this.editor.focus();
     };
     
-    render() {    
-        const body = stateToHTML(this.props.value)
+    render() {
+        let {pin} = this.props
         return (
-                <div className="editor" onClick={this.focus}>
+                <div className={this.props.readOnly ? "editor editorReadonly" : "editor"} onClick={this.focus}>
+                {!this.props.readOnly &&
                     <Toolbar>
                         {
                             // may be use React.Fragment instead of div to improve perfomance after React 16
@@ -58,20 +71,32 @@ export default class DraftTextEditor extends React.Component {
                                 <HeadlineTwoButton {...externalProps} />
                                 <HeadlineThreeButton {...externalProps} />
                                 <Separator {...externalProps} />
-                                <UnorderedListButton {...externalProps} />
-                                <OrderedListButton {...externalProps} />
+                                { pin && (pin.type == "Component" || pin.type == "Code Snippet" || pin.type == "Task List") &&
+                                    <span>
+                                        <UnorderedListButton {...externalProps} />
+                                        <OrderedListButton {...externalProps} />
+                                    </span>
+                                }
                                 <BlockquoteButton {...externalProps} />
-                                <CodeBlockButton {...externalProps} />
-                                <SubButton {...externalProps} />
-                                <SupButton {...externalProps} />
+                                { pin && (pin.type == "Component" || pin.type == "Code Snippet") &&
+                                    <CodeBlockButton {...externalProps} />
+                                }
+                                { pin && pin.type == "Component" &&
+                                    <span>
+                                        <SubButton {...externalProps} />
+                                        <SupButton {...externalProps} />
+                                    </span>
+                                }
                             </div>
                             )
                         }
                     </Toolbar>
+                }
                     <Editor
-                        editorState={body}
-                        onChange={this.onChange}
+                        editorState={this.state.editorState}
+                        onChange={!this.props.readOnly ? this.onChange : ()=>(false)}
                         plugins={plugins}
+                        readOnly={this.props.readOnly}
                         ref={(element) => { this.editor = element; }}
                         customStyleMap={{
                             SUBSCRIPT: { fontSize: '0.6em', verticalAlign: 'sub' },

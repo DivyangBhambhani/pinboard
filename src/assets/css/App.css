@@ -6,6 +6,11 @@
     border-radius: 2px;
     background: #fefefe;
   }
+
+  .editorReadonly {
+    border-bottom: none !important;
+    padding: 0 !important;
+  }
   
   .editor :global(.public-DraftEditor-content) {
     min-height: 140px;
@@ -1322,4 +1327,37 @@ input:-webkit-autofill:focus {
 
 .MuiListItemIcon-root {
     color: #3f51b5 !important;
+}
+
+.commandTextfield {
+    font-family: monospace !important;
+    font-size: large;
+    padding-left: 2vh !important;
+    background: #3f51b51f !important;
+    color: #656473 !important;
+}
+
+.dropzone {
+    flex: 1 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: #3f51b5;
+    border-style: dashed;
+    background-color: #fafafa;
+    color: #bdbdbd;
+    outline: none;
+    transition: border .24s ease-in-out
+  }
+
+.MuiChip-avatar {
+    color: #3f51b5 !important;
+}
+
+.MuiAvatar-colorDefault {
+    background: #fff !important;
+    border: solid 1px #3f51b5 !important;
 }
