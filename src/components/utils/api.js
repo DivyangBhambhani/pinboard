@@ -1,4 +1,8 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/storage';
+
+const db = firebase.firestore();
 
 export const uploadPinImages = (acceptedFiles) => {
     const storageRef = firebase.storage().ref();
@@ -80,7 +84,7 @@ export const getPins = (params = []) => {
                 "pinBody":"<p>&nbsp;</p>\n<pre><code>const handlePinBody = (value) =&gt; {<br>\n setPinBody(value)<br>\n &nbsp;&nbsp;&nbsp;}</code></pre>",
                 "tags":["React", "PHP"],
                 "contributors":["Divyang Bhambhani", "Manisha Sawlani"],
-                "owner":"Manisha Sawlani",
+                "owner":"manisha sawlani",
                 "command":"npm install pinboard",
                 "board":1
             },{
@@ -252,14 +256,69 @@ export const getUsers = (params = []) => {
     )
 }
 
+export const addTags = (name) => {
+
+    if (!name) {
+        throw 'Tag Name is required';
+    }
+
+    let result = [];
+
+    let status = 'Active';
+    let createdDate = new Date().getTime();
+    let updatedDate = new Date().getTime();
+
+    const data = {
+        name,
+        status,
+        createdDate,
+        updatedDate
+    };
+
+    return db.collection('tags').add(data).then((doc) => {
+        return [{
+            "status": true,
+            "message": "Tag Name added successfully!",
+            "data": {
+                "id": doc.id,
+                "name" : name
+            }
+        }];
+    }).catch((error) => {
+        return [{
+            "status": false, 
+            "message": error,
+            "data": []
+        }];
+    });
+}
+
+  
 export const getTags = (params = []) => {
-    return (
-        [
-            { id:1, label: 'React'},
-            { id:2, label: 'JS' },
-            { id:3, label: 'PHP' }
-        ]
-    )
+   
+    let result = [];
+    return db.collection('tags').get().then((tagQuerySnapshot) => {
+        tagQuerySnapshot.forEach(
+            (doc) => {
+                let tag = doc.data();
+                tag.id = doc.id;
+                result.push(tag);
+            }
+        );
+        return [{
+            "status": true, 
+            "message": "",
+            "data": result,
+            "totalCount": 2
+        }];
+    }).catch((error) => {
+        return [{
+            "status": false, 
+            "message": error,
+            "data": [],
+            "totalCount": 0
+        }];
+    });
 }
 
 export const getBoards = (params) => {

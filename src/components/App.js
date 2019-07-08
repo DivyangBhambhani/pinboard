@@ -10,6 +10,7 @@ import Home from './dashboard/Home';
 import firebaseApp from '../config/firebaseConfig';
 import history from './history';
 import Pins from './dashboard/pin/Pins';
+import Tags from './dashboard/tag/Tags';
 
 const PrivateRoute = ({ component: Component, userObj, isAuthed, ...rest }) => (
   <Route {...rest} render={function(props) {
@@ -76,6 +77,7 @@ class App extends React.Component {
                         <PrivateRoute path='/home' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Home} />
                         <PrivateRoute exact path='/pins' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Pins} />
                         <PrivateRoute path='/pins/:id' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={PinView} />
+                        <PrivateRoute path='/tags' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Tags} />
                         <Route render = {() => (<p>Not Found</p>) } />
                     </Switch>
                 </BrowserRouter>

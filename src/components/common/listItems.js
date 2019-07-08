@@ -36,6 +36,14 @@ export const mainListItems = (
             <ListItemText primary="Pins" />
         </ListItem>
     </Link>
+    <Link href="/tags">
+        <ListItem button>
+            <ListItemIcon>
+                <BoardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Tags" />
+        </ListItem>
+    </Link>
     <Link href="/home">
         <ListItem button>
             <ListItemIcon>
