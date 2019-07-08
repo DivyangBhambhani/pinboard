@@ -96,19 +96,17 @@ export default function PinFormDrawer(props) {
     }
 
     const handleTags = (selectedItem) => {
-        setTags(selectedItem.inputValue)
+        setTags(selectedItem)
     }
 
     const handleContributors = (selectedItem) => {
-        setContributors(selectedItem.inputValue)
+        setContributors(selectedItem)
     }
 
     const handleSelectBoard = (value) => {
         if(value == 0) {
-            console.log('zero')
             setopenBoardForm(true)
         } else {
-            console.log('119')
             setBoard(value)
         }
     }
@@ -125,9 +123,7 @@ export default function PinFormDrawer(props) {
         let newItem = {value: boards.length, label: newBoardName}
         localStorage.setItem('board', newItem)
         boards.push(newItem)
-        console.log(boards)
         setBoard(newItem.value)
-        console.log(board)
         setopenBoardForm(false)
     }
 

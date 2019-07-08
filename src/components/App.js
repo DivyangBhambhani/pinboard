@@ -14,7 +14,6 @@ import Tags from './dashboard/tag/Tags';
 
 const PrivateRoute = ({ component: Component, userObj, isAuthed, ...rest }) => (
   <Route {...rest} render={function(props) {
-    console.log(isAuthed, userObj,'PrivateRoute');
     return isAuthed === true
       ? <Component isAuthed={isAuthed} user={userObj} {...props} {...rest} />
       : <Redirect to={{
@@ -42,10 +41,10 @@ class App extends React.Component {
     authListener() {
         firebaseApp.auth().onAuthStateChanged((user) => {
             if (user) {
-                console.log('User authed');
+                console.log('User authed: ',user);
                 this.setState({ user: user, auth: true, loading:false });
             } else {
-                console.log('No User authed');
+                console.log('Unauthenticated user');
                 this.setState({ user: null, loading:false });
             }
         });
@@ -63,10 +62,8 @@ class App extends React.Component {
     render() {
         let {auth, user, loading} = this.state;
         if (auth === false && user == null && loading === true) {
-            console.log('App Loading');
             return <Loading />
         }
-        console.log(user,'userapp');
         return (
             <div className="App">
                 <BrowserRouter history={history}>

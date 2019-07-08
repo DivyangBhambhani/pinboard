@@ -64,7 +64,6 @@ export default function Pins(props) {
                                 })
                             }
                         </Grid>
-                        {console.log(mode,'pinsJs')}
                         <PinFormDrawer 
                             openPinDrawer={pinFormDrawer}
                             pinObj={pin}
