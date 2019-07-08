@@ -19,12 +19,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Tags(props) {
-    const result = getTags();
     let data = [];
-    getTags().then((result) => {
-        data.push(result[0].data);
-    });
-    
+
     const classes = useStyles();
     const [state, setState] = React.useState({
     columns: [
@@ -39,8 +35,6 @@ export default function Tags(props) {
         }
     ],
     data: [
-      {"id": 3, "name":"test"},
-      {"id": 3, "name":"test"}
     ]
   });
 
@@ -54,7 +48,16 @@ export default function Tags(props) {
                   <MaterialTable
                     title="Editable Example"
                     columns={state.columns}
-                    data={state.data}
+                    data={query => 
+                      
+                      getTags().then((result) => {
+                        return ({
+                                data: result[0].data,
+                                page:  1,
+                                totalCount: 11,
+                              })
+                        })
+                    }
                     editable={{
                       onRowAdd: newData => {
                         return addTags(newData).then((result) => {
