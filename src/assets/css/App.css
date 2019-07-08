@@ -4,7 +4,6 @@
     cursor: text;
     padding: 16px 0;
     border-radius: 2px;
-    background: #fefefe;
   }
 
   .editorReadonly {
@@ -1130,7 +1129,6 @@ h6 {
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 2em;
@@ -1360,4 +1358,14 @@ input:-webkit-autofill:focus {
 .MuiAvatar-colorDefault {
     background: #fff !important;
     border: solid 1px #3f51b5 !important;
+}
+
+.renderChip {
+    font-size: 16px !important;
+    padding: 10px !important;
+    margin: .25rem!important;
+}
+
+.height-full-screen {
+    height: 100vh !important;
 }

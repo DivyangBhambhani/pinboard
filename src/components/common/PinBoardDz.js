@@ -2,8 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {useDropzone} from 'react-dropzone';
 import {uploadPinImages} from '../utils/api';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import Button from '@material-ui/core/Button';
-
 
 const thumbsContainer = {
   display: 'flex',
@@ -43,7 +41,6 @@ function PinBoardDz(props) {
     const { enqueueSnackbar } = useSnackbar();
 
     const handleClickVariant = (message, variant) => () => {
-        console.log('I am snackbar')
         enqueueSnackbar(message, { variant });
     };
 
@@ -51,14 +48,12 @@ function PinBoardDz(props) {
         accept: 'image/*',
         maxSize: 2000000,
         onDrop: acceptedFiles => {
-            console.log(acceptedFiles,'asdasdasd')
             setFiles(acceptedFiles.map(file => Object.assign(file, {
                 preview: URL.createObjectURL(file)
             })));
             uploadPinImages(acceptedFiles);
         },
         onDropRejected: () => {
-            console.log()
             handleClickVariant('Maximum file size limit exceeded', 'error')()
         }
     });

@@ -63,7 +63,6 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
         : suggestions.filter(suggestion => {
             const keep =
             count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
-
             if (keep) {
             count += 1;
             }
@@ -71,128 +70,6 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
             return keep;
         });
 }
-
-function DownshiftMultiple(props) {
-    const { classes } = props;
-    const [inputValue, setInputValue] = React.useState('');
-    const [selectedItem, setSelectedItem] = React.useState([]);
-    const required = props.required === "true" ? ' *' : '';
-
-    useEffect(() => {
-        let newSelectedItem = [];
-        if (props && props.value !== 'undefined') {
-            let propsValue = props.value
-            if (typeof propsValue == "string") {
-                propsValue = propsValue.split(",");
-            }
-            propsValue.map((item,index) => {
-                if (selectedItem.indexOf(item) === -1) {
-                    newSelectedItem = selectedItem.concat(item);
-                    setInputValue('');
-                    setSelectedItem(newSelectedItem);
-                }
-            })
-        }
-        
-    },[])
-    
-    function handleKeyDown(event) {
-        if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
-        setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
-        }
-    }
-
-    function handleInputChange(event) {
-        setInputValue(event.target.value);
-    }
-
-    function handleChange(item) {
-        let newSelectedItem = [...selectedItem];
-        if (newSelectedItem.indexOf(item) === -1) {
-            newSelectedItem = [...newSelectedItem, item];
-        }
-        setInputValue('');
-        setSelectedItem(newSelectedItem);
-    }
-
-    const handleDelete = item => () => {
-        const newSelectedItem = [...selectedItem];
-        newSelectedItem.splice(newSelectedItem.indexOf(item), 1);
-        setSelectedItem(newSelectedItem);
-    };
-
-    return (
-        <Downshift
-            id="downshift-multiple"
-            inputValue={inputValue}
-            onChange={handleChange}
-            selectedItem={selectedItem}
-            onStateChange={props.onStateChange}
-        >
-        {({
-            getInputProps,
-            getItemProps,
-            getLabelProps,
-            isOpen,
-            inputValue: inputValue2,
-            selectedItem: selectedItem2,
-            highlightedIndex,
-        }) => {
-            const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
-                onKeyDown: handleKeyDown,
-                placeholder: 'Type Something Here',
-            });
-
-            return (
-                <div className={classes.container}>
-                    {renderInput({
-                    fullWidth: true,
-                    classes,
-                    label: `${props.label}${required}`,
-                    InputLabelProps: getLabelProps(),
-                    InputProps: {
-                        startAdornment: (selectedItem || []).map(item => (
-                        <Chip
-                            key={item}
-                            tabIndex={-1}
-                            label={item}
-                            className={classes.chip}
-                            onDelete={handleDelete(item)}
-                        />
-                        )),
-                        onBlur,
-                        onChange: event => {
-                        handleInputChange(event);
-                        onChange(event);
-                        },
-                        onFocus,
-                    },
-                    inputProps,
-                    })}
-
-                    {isOpen ? (
-                    <Paper className={classes.paper} square>
-                        {getSuggestions(props.suggestions, inputValue2).map((suggestion, index) =>
-                        renderSuggestion({
-                            suggestion,
-                            index,
-                            itemProps: getItemProps({ item: suggestion.label }),
-                            highlightedIndex,
-                            selectedItem: selectedItem2,
-                        }),
-                        )}
-                    </Paper>
-                    ) : null}
-                </div>
-            );
-        }}
-        </Downshift>
-    );
-}
-
-DownshiftMultiple.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -224,14 +101,145 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function AutocompleteMultiple(props) {
+export default function DownshiftMultiple(props) {
     const classes = useStyles();
+    const [inputValue, setInputValue] = React.useState('');
+    const [selectedItem, setSelectedItem] = React.useState([]);
+    const required = props.required === "true" ? ' *' : '';
     
+    useEffect(() => {
+        let newSelectedItem = [];
+        if (props && props.value !== 'undefined') {
+            let propsValue = props.value
+            if (typeof propsValue == "string") {
+                propsValue = propsValue.split(",");
+            }
+            propsValue.map((item,index) => {
+                if (selectedItem.indexOf(item.id) === -1) {
+                    newSelectedItem = selectedItem.concat(item);
+                    setInputValue('');
+                    setSelectedItem(newSelectedItem);
+                }
+            })
+        }
+        
+    },[])
+
+    function handleKeyDown(event) {
+        if (selectedItem.length && !inputValue.length && event.key === 'Backspace') {
+        setSelectedItem(selectedItem.slice(0, selectedItem.length - 1));
+        }
+    }
+
+    function handleInputChange(event) {
+        setInputValue(event.target.value);
+    }
+
+    function handleChange(item) {
+        let newitem = {}
+        props.collection.map((suggestion,index) => {
+            if (suggestion.id == item.id) {
+                newitem.id = suggestion.id
+                newitem.label = suggestion.label
+                let newSelectedItem = [...selectedItem];
+                let validStateChecker = 0
+                selectedItem.map((item,index) => {
+                    if (item.id === newitem.id) {
+                        validStateChecker = 1
+                    }
+                })
+                if(validStateChecker == 0) {
+                    newSelectedItem = [...newSelectedItem, newitem];
+                    setInputValue('');
+                    setSelectedItem(newSelectedItem);
+                } else {
+                    setInputValue('');
+                    
+                }
+            }
+        })
+    }
+
+    const handleDelete = item => () => {
+        const newSelectedItem = [...selectedItem];
+        newSelectedItem.splice(newSelectedItem.indexOf(item), 1);
+        setSelectedItem(newSelectedItem);
+    };
+
+    const itemToString = item => (item ? item.label : '')
+    
+
     return (
         <div className={classes.root}>
             <div className={classes.divider} />
-            <DownshiftMultiple suggestions={props.collection} value={props.value} label={props.label} required={props.required} onStateChange={props.onStateChange} classes={classes} />
+            <Downshift
+                id="downshift-multiple"
+                inputValue={inputValue}
+                onChange={handleChange}
+                itemToString={itemToString}
+                selectedItem={selectedItem}
+                onStateChange={() => props.onStateChange(selectedItem)}
+            >
+            {({
+                getInputProps,
+                getItemProps,
+                getLabelProps,
+                isOpen,
+                inputValue: inputValue2,
+                selectedItem: selectedItem2,
+                highlightedIndex,
+            }) => {
+                const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
+                    onKeyDown: handleKeyDown,
+                    placeholder: 'Type Something Here',
+                });
+
+                return (
+                    <div className={classes.container}>
+                        {renderInput({
+                        fullWidth: true,
+                        classes,
+                        label: `${props.label}${required}`,
+                        InputLabelProps: getLabelProps(),
+                        InputProps: {
+                            startAdornment: (selectedItem || []).map(item => (
+                            <Chip
+                                key={item.id}
+                                tabIndex={-1}
+                                label={item.label}
+                                className={classes.chip}
+                                onDelete={handleDelete(item)}
+                            />
+                            )),
+                            onBlur,
+                            onChange: event => {
+                            handleInputChange(event);
+                            onChange(event);
+                            },
+                            onFocus,
+                        },
+                        inputProps,
+                        })}
+
+                        {isOpen ? (
+                        <Paper className={classes.paper} square>
+                            {getSuggestions(props.collection, inputValue2).map((suggestion, index) =>
+                            renderSuggestion({
+                                suggestion,
+                                index,
+                                itemProps: getItemProps({ item: suggestion }),
+                                highlightedIndex,
+                                selectedItem: selectedItem2,
+                            }),
+                            )}
+                        </Paper>
+                        ) : null}
+                    </div>
+                );
+            }}
+            </Downshift>
             <FormHelperText>{props.helper}</FormHelperText>
         </div>
+            
     );
 }

@@ -48,7 +48,6 @@ function ImgMediaCard(props) {
 
     const handleDrawerClick = () => {
         if (props && props.type != "smartAction") {
-            console.log('Smart')
             props.history.push({
                 pathname: `/pins/${props.pinObj.id}`
             })

@@ -4,7 +4,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/DashboardOutlined';
-import BoardIcon from '@material-ui/icons/FolderOutlined';
+import BoardIcon from '@material-ui/icons/DeveloperBoard';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import AssignmentIcon from '@material-ui/icons/AssignmentOutlined';
 import PinIcon from '@material-ui/icons/BookOutlined';
