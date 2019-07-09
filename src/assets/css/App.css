@@ -1351,15 +1351,6 @@ input:-webkit-autofill:focus {
     transition: border .24s ease-in-out
   }
 
-.MuiChip-avatar {
-    color: #3f51b5 !important;
-}
-
-.MuiAvatar-colorDefault {
-    background: #fff !important;
-    border: solid 1px #3f51b5 !important;
-}
-
 .renderChip {
     font-size: 16px !important;
     padding: 10px !important;

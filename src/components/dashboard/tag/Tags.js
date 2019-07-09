@@ -66,9 +66,8 @@ function Tags(props) {
                             return addTag(newData).then((result) => {
                                 if (result.status) {
                                     const data = [...state.data];
-                                    data.concat(result.data);
-                                    console.log(data, result.data);
-                                    setState({ ...state, data });
+                                    let newData = data.concat(result.data);
+                                    setState({ ...state, data:newData });
                                     handleClickVariant(result.message, 'success')()
                                 } else {
                                     handleClickVariant(result.message, 'error')()

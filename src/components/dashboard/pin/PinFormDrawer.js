@@ -20,6 +20,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {getUsers, getTags, getBoards} from  '../../utils/api';
 import EditViewSwitch from '../../common/EditViewSwitch';
 import PinBoardDz from '../../common/PinBoardDz';
+import RenderChips from '../../common/RenderChips';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -30,11 +33,17 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     color:'#ffffff'
   },
+  paper: {
+      background: '#f3f0f0 !important'
+  },
   layout: {
     width: 'auto',
     marginTop: '20px',
+    background:'#ffffff !important',
+    padding: '2rem',
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(2),
+    marginTop: '5rem',
     [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
       width: 900,
       marginLeft: 'auto',
@@ -50,6 +59,24 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const pinboardUsers = getUsers()
 const boards = getBoards()
 const tagCollection = getTags()
+
+function ElevationScroll(props) {
+    const { children, window } = props;
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 0,
+        target: window ? window() : undefined,
+    });
+
+    return React.cloneElement(children, {
+        elevation: trigger ? 4 : 0,
+    });
+}
+
+ElevationScroll.propTypes = {
+    children: PropTypes.node.isRequired,
+    window: PropTypes.func,
+};
 
 export default function PinFormDrawer(props) {
     const classes = useStyles();
@@ -116,7 +143,7 @@ export default function PinFormDrawer(props) {
     }
 
     const handleSelectBoard = (value) => {
-        if(value == 0) {
+        if(value == "0") {
             setopenBoardForm(true)
         } else {
             setBoard(value)
@@ -160,23 +187,24 @@ export default function PinFormDrawer(props) {
 
     return (
         <div>
-            <Dialog fullScreen open={props.openPinDrawer} onClose={handleCloseDrawer} TransitionComponent={Transition}>
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleCloseDrawer} aria-label="Close">
-                        <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                        {`${props.mode=="edit" ? 'Edit' : props.mode == "view" ? 'View' : 'Add'} ${props.pinObj ? props.pinObj.type : ''}`}
-                        </Typography>
-                        <Button color="inherit" onClick={handleSavePin}>
-                        save
-                        </Button>
-                    </Toolbar>
-                </AppBar>
+            <Dialog classes={{paper:classes.paper}} fullScreen open={props.openPinDrawer} onClose={handleCloseDrawer} TransitionComponent={Transition}>
+            <ElevationScroll {...props}>
+                    <AppBar>
+                        <Toolbar>
+                            <IconButton edge="start" color="inherit" onClick={handleCloseDrawer} aria-label="Close">
+                            <CloseIcon />
+                            </IconButton>
+                            <Typography variant="h6" className={classes.title}>
+                            {`${props.mode=="edit" ? 'Edit' : props.mode == "view" ? 'View' : 'Add'} ${props.pinObj ? props.pinObj.type : ''}`}
+                            </Typography>
+                            <Button color="inherit" onClick={handleSavePin}>
+                            save
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                </ElevationScroll>
                 <React.Fragment>
                     <div className={classes.layout}>
-                        
                         { props && props.mode == "edit" && (props.user.displayName == props.pinObj.owner) &&
                             <EditViewSwitch 
                                 mode={props.mode}
@@ -224,7 +252,10 @@ export default function PinFormDrawer(props) {
                                 }
                                 { !switchOn &&
                                     <div>
-                                        {tags}
+                                    <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
+                                    Tags
+                                    </Typography>
+                                    <RenderChips customClass="renderChip" avatar={false} items={tags} />
                                     </div>
                                 }
                             </Grid>
@@ -240,7 +271,10 @@ export default function PinFormDrawer(props) {
                                 
                                 { !switchOn &&
                                     <div>
-                                        {contributors}
+                                    <Typography variant="h6" gutterBottom className={classes.sidebarSection}>
+                                    Contributors
+                                    </Typography>
+                                    <RenderChips customClass="m-1" avatar={true} items={contributors} />
                                     </div>
                                 }
                             </Grid>

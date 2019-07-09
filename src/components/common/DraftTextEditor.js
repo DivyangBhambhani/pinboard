@@ -5,6 +5,7 @@ import {stateToHTML} from 'draft-js-export-html';
 import 'draft-js-static-toolbar-plugin/lib/plugin.css';
 import {stateFromHTML} from 'draft-js-import-html';
 import createToolbarPlugin, { Separator } from 'draft-js-static-toolbar-plugin';
+import FormLabel from '@material-ui/core/FormLabel';
 import {
   ItalicButton,
   BoldButton,
@@ -23,13 +24,13 @@ import {
 const toolbarPlugin = createToolbarPlugin();
 const { Toolbar } = toolbarPlugin;
 const plugins = [toolbarPlugin];
-const text = 'Enter your code snippet and related information here...';
+const text = 'Enter the content of your pin here...';
 
 export default class DraftTextEditor extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            editorState: createEditorStateWithText(text),
+            editorState: EditorState.createEmpty(),
         };
     }
     
@@ -58,6 +59,7 @@ export default class DraftTextEditor extends React.Component {
         let {pin} = this.props
         return (
                 <div className={this.props.readOnly ? "editor editorReadonly" : "editor"} onClick={this.focus}>
+                <FormLabel component="legend">Pin Content *</FormLabel>
                 {!this.props.readOnly &&
                     <Toolbar>
                         {

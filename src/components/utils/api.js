@@ -4,7 +4,6 @@ const db = firebase.firestore();
 
 export const uploadPinImages = (acceptedFiles) => {
     const storageRef = firebase.storage().ref();
-    console.log('ere')
     acceptedFiles.map((file, index) => {
         console.log(file.name, 'file')
         let metadata = {
@@ -439,9 +438,9 @@ export const deleteTag = async(params = []) => {
 export const getBoards = (params) => {
     return (
         [
-            {value: 0, label:'React Knowledgebase'},
-            {value: 1, label:'LAMP Team'},
-            {value: 2, label:'Java Team'},
+            {value: 1, label:'React Knowledgebase'},
+            {value: 2, label:'LAMP Team'},
+            {value: 3, label:'Java Team'},
         ]
     )
 }
