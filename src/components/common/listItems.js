@@ -8,6 +8,7 @@ import BoardIcon from '@material-ui/icons/DeveloperBoard';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import AssignmentIcon from '@material-ui/icons/AssignmentOutlined';
 import PinIcon from '@material-ui/icons/BookOutlined';
+import TagIcon from '@material-ui/icons/CategoryOutlined';
 import Link from '@material-ui/core/Link';
 
 export const mainListItems = (
@@ -39,7 +40,7 @@ export const mainListItems = (
     <Link href="/tags">
         <ListItem button>
             <ListItemIcon>
-                <BoardIcon />
+                <TagIcon />
             </ListItemIcon>
             <ListItemText primary="Tags" />
         </ListItem>

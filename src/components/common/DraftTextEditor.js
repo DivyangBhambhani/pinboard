@@ -40,6 +40,7 @@ export default class DraftTextEditor extends React.Component {
             })
         }
     }
+
     onChange = (editorState) => {
         this.setState({
           editorState,

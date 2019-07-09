@@ -12,7 +12,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import DraftTextEditor from '../../common/DraftTextEditor';
 import AutocompleteMultiple from '../../common/AutocompleteMultiple';
-import Autocomplete from '../../common/Autocomplete';
 import SelectDropDown from '../../common/SelectDropDown';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -69,6 +68,7 @@ export default function PinFormDrawer(props) {
 
     const handleCloseBoardForm = () => {
         setopenBoardForm(false);
+        clearState()
     }
     const handleSwitchOn = (flag) => {
         setSwitchOn(flag.checkedA)
@@ -86,6 +86,18 @@ export default function PinFormDrawer(props) {
             setSwitchOn(props.mode == "view" ? false : true)
         }
     },[props])
+
+    const clearState = () => {
+        setPinTitle('')
+        setBoard('')
+        setTags([])
+        setContributors([])
+        setPinBody('')
+        setCommand('')
+        setSwitchOn(switchOn)
+        setopenBoardForm(false)
+        setNewBoardName('')
+    }
 
     const handleCommand = (e) => {
         setCommand(e.target.value)
@@ -138,14 +150,20 @@ export default function PinFormDrawer(props) {
             board
         }))
         props.onClickDrawerClose()
+        clearState()
+    }
+
+    const handleCloseDrawer = () => {
+        props.onClickDrawerClose()
+        clearState()
     }
 
     return (
         <div>
-            <Dialog fullScreen open={props.openPinDrawer} onClose={props.onClickDrawerClose} TransitionComponent={Transition}>
+            <Dialog fullScreen open={props.openPinDrawer} onClose={handleCloseDrawer} TransitionComponent={Transition}>
                 <AppBar className={classes.appBar}>
                     <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={props.onClickDrawerClose} aria-label="Close">
+                        <IconButton edge="start" color="inherit" onClick={handleCloseDrawer} aria-label="Close">
                         <CloseIcon />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}>
@@ -245,7 +263,7 @@ export default function PinFormDrawer(props) {
                                 }
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                { switchOn &&
+                                { switchOn && props.pinObj && props.pinObj.type == "Component" &&
                                     <TextField
                                         id="componentUrl"
                                         name="componentUrl"
@@ -261,7 +279,7 @@ export default function PinFormDrawer(props) {
                                     </div>
                                 }
                             </Grid>
-                            { switchOn &&
+                            { switchOn && props.pinObj && props.pinObj.type == "Component" &&
                                 <Grid item xs={12} sm={12}>
                                     <PinBoardDz />
                                 </Grid>

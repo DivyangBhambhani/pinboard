@@ -301,7 +301,7 @@ export const addTags = (name) => {
     if (!name) {
         throw 'Tag Name is required';
     }
-
+    
     let result = [];
 
     let status = 'Active';
@@ -334,31 +334,31 @@ export const addTags = (name) => {
 }
 
   
-export const getTags = (params = []) => {
-   
-    let result = [];
-    return db.collection('tags').get().then((tagQuerySnapshot) => {
+export const getTags = async (params = []) => {
+    try {
+        let result = []
+        let tagQuerySnapshot = await db.collection('tags').get()
+            
         tagQuerySnapshot.forEach(
             (doc) => {
-                let tag = doc.data();
-                tag.id = doc.id;
-                result.push(tag);
+                let tag = {}
+                tag.id = doc.id
+                tag.name = doc.data().name
+                result.push(tag)
             }
-        );
-        return [{
+        )
+        return ({
             "status": true, 
             "message": "",
-            "data": result,
-            "totalCount": 2
-        }];
-    }).catch((error) => {
-        return [{
+            "data": result
+        })
+    } catch (error) {
+        return ({
             "status": false, 
             "message": error,
-            "data": [],
-            "totalCount": 0
-        }];
-    });
+            "data": []
+        })
+    }
 }
 
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Header from '../../common/Header';
@@ -20,72 +20,68 @@ const useStyles = makeStyles(theme => ({
 
 export default function Tags(props) {
     const result = getTags();
-    let data = [];
-    getTags().then((result) => {
-        data.push(result[0].data);
-    });
-    
     const classes = useStyles();
+    let data = [];
+    
     const [state, setState] = React.useState({
-    columns: [
-        {
-            title: 'Id',
-            field: 'id',
-            hidden: true 
-        },
-        { 
-            title: 'Name', 
-            field: 'name'
-        }
-    ],
-    data: [
-      {"id": 3, "name":"test"},
-      {"id": 3, "name":"test"}
-    ]
-  });
+        columns: [
+            { 
+                title: 'Name', 
+                field: 'name'
+            }
+        ],
+        data: []
+    });
 
-  return (
-    <div>
-        <Header props={props}>
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                    
-                  <MaterialTable
-                    title="Editable Example"
-                    columns={state.columns}
-                    data={state.data}
-                    editable={{
-                      onRowAdd: newData => {
-                        return addTags(newData).then((result) => {
-                            const data = [...state.data];
-                            data.push(newData);
-                            setState({ ...state, data });
-                        });
-                      },
-                      onRowUpdate: (newData, oldData) =>
-                        new Promise(resolve => {
-                          setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data[data.indexOf(oldData)] = newData;
-                            setState({ ...state, data });
-                          }, 600);
-                        }),
-                      onRowDelete: oldData =>
-                        new Promise(resolve => {
-                          setTimeout(() => {
-                            resolve();
-                            const data = [...state.data];
-                            data.splice(data.indexOf(oldData), 1);
-                            setState({ ...state, data });
-                          }, 600);
-                        }),
-                    }}
-                  />
-                </Container>
-            </main>
-        </Header>
-    </div>
-  );
+    useEffect(() => {
+        getTags().then((result) => {
+            let newState = {...state, data: result.data}
+            setState(newState)
+        })
+    }, [])
+    
+    return (
+        <div>
+            <Header props={props}>
+                <main className={classes.content}>
+                    <div className={classes.appBarSpacer} />
+                    <Container maxWidth="lg" className={classes.container}>
+                        
+                    <MaterialTable
+                        title="Editable Example"
+                        columns={state.columns}
+                        data={state.data}
+                        editable={{
+                        onRowAdd: newData => {
+                            return addTags(newData).then((result) => {
+                                const data = [...state.data];
+                                data.push(newData);
+                                setState({ ...state, data });
+                            });
+                        },
+                        onRowUpdate: (newData, oldData) =>
+                            new Promise(resolve => {
+                            setTimeout(() => {
+                                resolve();
+                                const data = [...state.data];
+                                data[data.indexOf(oldData)] = newData;
+                                setState({ ...state, data });
+                            }, 600);
+                            }),
+                        onRowDelete: oldData =>
+                            new Promise(resolve => {
+                            setTimeout(() => {
+                                resolve();
+                                const data = [...state.data];
+                                data.splice(data.indexOf(oldData), 1);
+                                setState({ ...state, data });
+                            }, 600);
+                            }),
+                        }}
+                    />
+                    </Container>
+                </main>
+            </Header>
+        </div>
+    );
 }
