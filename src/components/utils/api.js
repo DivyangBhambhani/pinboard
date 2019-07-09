@@ -1,6 +1,4 @@
-import * as firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/storage';
+import firebase from '../../config/firebaseConfig';
 
 const db = firebase.firestore();
 
@@ -296,49 +294,49 @@ export const getUsers = (params = []) => {
     )
 }
 
-export const addTags = (params) => {
-    let name = params.name;
-    if (!name) {
-        throw 'Tag Name is required';
-    }
-    
-    let result = [];
+export const addTags = async (params) => {
+    try {
+        let name = params.name;
 
-    let status = 'Active';
-    let createdDate = new Date().getTime();
-    let updatedDate = new Date().getTime();
+        let result = [];
 
-    const data = {
-        name,
-        status,
-        createdDate,
-        updatedDate
-    };
+        let status = 'Active';
+        let createdDate = new Date().getTime();
+        let updatedDate = new Date().getTime();
 
-    return db.collection('tags').add(data).then((doc) => {
-        return [{
+        const data = {
+            name,
+            status,
+            createdDate,
+            updatedDate
+        };
+
+        let tagRef  = await db.collection('tags').add(data);
+        const tag = await tagRef.get();
+
+        return ({
             "status": true,
             "message": "Tag Name added successfully!",
             "data": {
-                "id": doc.id,
+                "id": tagRef.id,
                 "name" : name
             }
-        }];
-    }).catch((error) => {
-        return [{
+        });
+    } catch (error) {
+        return ({
             "status": false, 
             "message": error,
-            "data": []
-        }];
-    });
+            "data": {}
+        });
+    }
 }
 
   
 export const getTags = async (params = []) => {
     try {
         let result = []
-        let tagQuerySnapshot = await db.collection('tags').get()
-            
+        let tagQuerySnapshot = await db.collection('tags').orderBy('name').get()
+
         tagQuerySnapshot.forEach(
             (doc) => {
                 let tag = {}
@@ -359,6 +357,78 @@ export const getTags = async (params = []) => {
             "data": []
         })
     }
+}
+
+export const editTags = async(params = []) => {
+    try {
+
+    const id = params.id;
+    const name = params.name;
+
+    if (!id) throw new Error('id is blank');
+
+    if (!name) throw new Error('Title is required');
+
+    const data = { 
+        name
+    };
+
+    const tagRef = await db.collection('fights')
+        .doc(id)
+        .set(data, { merge: true });
+
+    return ({
+        "status": true,
+        "message": "Record updated successfully!",
+        "data": {
+            id: id,
+            data
+        }
+    });
+
+
+  } catch(error){
+
+    return ({
+        "status": false,
+        "message": error,
+        "data": []
+    })
+
+  }
+
+}
+
+
+export const deleteTags = async(params = []) => {
+    try {
+
+    const id = params.id;
+    if (!id) throw new Error('id is blank');
+
+    const tagRef = await db.collection('fights')
+        .doc(id)
+        .delete();
+
+    return ({
+        "status": true,
+        "message": "Record deleted successfully!",
+        "data": {
+            id: id
+        },
+    });
+
+
+  } catch(error){
+
+    return ({
+        "status": false,
+        "message": error,
+        "data": []
+    })
+
+  }
+
 }
 
 
