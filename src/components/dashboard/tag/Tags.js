@@ -2,8 +2,9 @@ import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Header from '../../common/Header';
-import {getTags, addTags} from '../../utils/api';
+import {getTags, addTag, editTag, deleteTag} from '../../utils/api';
 import MaterialTable from 'material-table';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 const useStyles = makeStyles(theme => ({
     appBarSpacer: theme.mixins.toolbar,
@@ -18,9 +19,17 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function Tags(props) {
-    const result = getTags();
+function Tags(props) {
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();  
+    
+    const handleClickVariant = (message, variant) => () => {
+        enqueueSnackbar(message, {
+            variant, 
+            autoHideDuration: 3000
+        });
+    };
+
     let data = [];
     
     const [state, setState] = React.useState({
@@ -48,40 +57,63 @@ export default function Tags(props) {
                     <Container maxWidth="lg" className={classes.container}>
                         
                     <MaterialTable
-                        title="Editable Example"
+                        title="Tags"
                         columns={state.columns}
                         data={state.data}
+                        options={{
+                            actionsColumnIndex: -1
+                        }}
                         editable={{
                         onRowAdd: newData => {
-                            return addTags(newData).then((result) => {
-                                const data = [...state.data];
-                                data.push(newData);
-                                setState({ ...state, data });
+                            return addTag(newData).then((result) => {
+                                if (result.status) {
+                                    const data = [...state.data];
+                                    console.log(data, result.data);
+                                    data.concat(result.data);
+                                    setState({ ...state, data });
+                                    handleClickVariant(result.message, 'success')()
+                                } else {
+                                    handleClickVariant(result.message, 'error')()
+                                }
                             });
                         },
-                        onRowUpdate: (newData, oldData) =>
-                            new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve();
-                                const data = [...state.data];
-                                data[data.indexOf(oldData)] = newData;
-                                setState({ ...state, data });
-                            }, 600);
-                            }),
-                        onRowDelete: oldData =>
-                            new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve();
-                                const data = [...state.data];
-                                data.splice(data.indexOf(oldData), 1);
-                                setState({ ...state, data });
-                            }, 600);
-                            }),
-                        }}
+                        onRowUpdate: (newData, oldData) => {
+                            return editTag(newData).then((result) => {
+                                if (result.status) {
+                                    const data = [...state.data];
+                                    data[data.indexOf(oldData)] = newData;
+                                    setState({ ...state, data });
+                                    handleClickVariant(result.message, 'success')()
+                                } else {
+                                    handleClickVariant(result.message, 'error')()
+                                }
+                            });   
+                        },
+                        onRowDelete: oldData => {
+                            return deleteTag(oldData).then((result) => {
+                                if (result.status) {
+                                    const data = [...state.data];
+                                    data.splice(data.indexOf(oldData), 1);
+                                    setState({ ...state, data });
+                                    handleClickVariant(result.message, 'success')()
+                                } else {
+                                    handleClickVariant(result.message, 'error')()
+                                }
+                            });
+                        }
+                    }}
                     />
                     </Container>
                 </main>
             </Header>
         </div>
+    );
+}
+
+export default function WithNotistack() {
+    return (
+      <SnackbarProvider anchorOrigin={{ vertical: 'top', horizontal: 'right'}} maxSnack={3}>
+        <Tags />
+      </SnackbarProvider>
     );
 }

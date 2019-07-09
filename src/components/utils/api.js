@@ -294,7 +294,7 @@ export const getUsers = (params = []) => {
     )
 }
 
-export const addTags = async (params) => {
+export const addTag = async (params) => {
     try {
         let name = params.name;
 
@@ -311,31 +311,36 @@ export const addTags = async (params) => {
             updatedDate
         };
 
+        let tagQuerySnapshot = await db.collection('tags').where("name", "==", name).where("status", "==", "Active").get()
+
+        if (tagQuerySnapshot.docs.length) {
+            throw "Tag already exists";
+        }
+
         let tagRef  = await db.collection('tags').add(data);
         const tag = await tagRef.get();
 
         return ({
             "status": true,
-            "message": "Tag Name added successfully!",
-            "data": {
+            "message": "Tag added successfully!",
+            "data": [{
                 "id": tagRef.id,
                 "name" : name
-            }
+            }]
         });
     } catch (error) {
         return ({
             "status": false, 
             "message": error,
-            "data": {}
+            "data": []
         });
     }
 }
 
-  
 export const getTags = async (params = []) => {
     try {
         let result = []
-        let tagQuerySnapshot = await db.collection('tags').orderBy('name').get()
+        let tagQuerySnapshot = await db.collection('tags').where("status", "==", "Active").orderBy('name').get()
 
         tagQuerySnapshot.forEach(
             (doc) => {
@@ -359,76 +364,75 @@ export const getTags = async (params = []) => {
     }
 }
 
-export const editTags = async(params = []) => {
+export const editTag = async(params = []) => {
     try {
+        const id = params.id;
+        const name = params.name;
 
-    const id = params.id;
-    const name = params.name;
+        if (!id) throw 'id is blank';
 
-    if (!id) throw new Error('id is blank');
+        if (!name) throw 'Title is required';
 
-    if (!name) throw new Error('Title is required');
+        let tagQuerySnapshot = await db.collection('tags').where("name", "==", name).where("status", "==", "Active").get()
 
-    const data = { 
-        name
-    };
+        if(tagQuerySnapshot.docs.length && (tagQuerySnapshot.docs.length > 1 || (tagQuerySnapshot.docs.length === 1 && tagQuerySnapshot.docs[0].id !== id) )) {
+            throw "Tag already exists";
+        }    
 
-    const tagRef = await db.collection('fights')
-        .doc(id)
-        .set(data, { merge: true });
+        const data = { 
+            name
+        };
 
-    return ({
-        "status": true,
-        "message": "Record updated successfully!",
-        "data": {
-            id: id,
-            data
-        }
-    });
+        const tagRef = await db.collection('tags')
+            .doc(id)
+            .set(data, { merge: true });
 
-
-  } catch(error){
-
-    return ({
-        "status": false,
-        "message": error,
-        "data": []
-    })
-
-  }
-
+        return ({
+            "status": true,
+            "message": "Tag updated successfully!",
+            "data": [{
+                id: id,
+                data
+            }]
+        });
+    } catch(error){
+        return ({
+            "status": false,
+            "message": error,
+            "data": []
+        })
+    }
 }
 
-
-export const deleteTags = async(params = []) => {
+export const deleteTag = async(params = []) => {
     try {
+        const id = params.id;
+        if (!id) throw ('id is blank');
 
-    const id = params.id;
-    if (!id) throw new Error('id is blank');
+        let status = "Inactive";
+        const data = { 
+            status
+        };
 
-    const tagRef = await db.collection('fights')
-        .doc(id)
-        .delete();
+        const tagRef = await db.collection('tags')
+            .doc(id)
+            .set(data, { merge: true });
 
-    return ({
-        "status": true,
-        "message": "Record deleted successfully!",
-        "data": {
-            id: id
-        },
-    });
+        return ({
+            "status": true,
+            "message": "Tag deleted successfully!",
+            "data": [{
+                id: id
+            }],
+        });
 
-
-  } catch(error){
-
-    return ({
-        "status": false,
-        "message": error,
-        "data": []
-    })
-
-  }
-
+    } catch(error) {
+        return ({
+            "status": false,
+            "message": error,
+            "data": []
+        })
+    }
 }
 
 
