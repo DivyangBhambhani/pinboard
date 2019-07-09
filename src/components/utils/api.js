@@ -296,8 +296,8 @@ export const getUsers = (params = []) => {
     )
 }
 
-export const addTags = (name) => {
-
+export const addTags = (params) => {
+    let name = params.name;
     if (!name) {
         throw 'Tag Name is required';
     }
