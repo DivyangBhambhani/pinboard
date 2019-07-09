@@ -29,8 +29,6 @@ function Tags(props) {
             autoHideDuration: 3000
         });
     };
-
-    let data = [];
     
     const [state, setState] = React.useState({
         columns: [
@@ -68,8 +66,8 @@ function Tags(props) {
                             return addTag(newData).then((result) => {
                                 if (result.status) {
                                     const data = [...state.data];
-                                    console.log(data, result.data);
                                     data.concat(result.data);
+                                    console.log(data, result.data);
                                     setState({ ...state, data });
                                     handleClickVariant(result.message, 'success')()
                                 } else {
