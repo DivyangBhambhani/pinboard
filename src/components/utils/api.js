@@ -286,9 +286,9 @@ const getPinById = (id) => {
 export const getUsers = (params = []) => {
     return (
         [
-            { id:1, label: 'Manisha Sawlani' },
-            { id:2, label: 'Divyang Bhambhani' },
-            { id:3, label: 'Mohit Solanki' }
+            { id:1, name: 'Manisha Sawlani' },
+            { id:2, name: 'Divyang Bhambhani' },
+            { id:3, name: 'Mohit Solanki' }
         ]
     )
 }

@@ -58,7 +58,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const pinboardUsers = getUsers()
 const boards = getBoards()
-const tagCollection = getTags()
+let tagCollection = [];
 
 function ElevationScroll(props) {
     const { children, window } = props;
@@ -113,6 +113,12 @@ export default function PinFormDrawer(props) {
             setSwitchOn(props.mode == "view" ? false : true)
         }
     },[props])
+
+    useEffect(() => {
+        getTags().then((result) => {
+            tagCollection = tagCollection.concat(result.data);
+        })
+    }, [])
 
     const clearState = () => {
         setPinTitle('')

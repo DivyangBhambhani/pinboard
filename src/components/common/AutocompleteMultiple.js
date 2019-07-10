@@ -30,18 +30,18 @@ function renderInput(inputProps) {
 function renderSuggestion(suggestionProps) {
     const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps;
     const isHighlighted = highlightedIndex === index;
-    const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
+    const isSelected = (selectedItem || '').indexOf(suggestion.name) > -1;
 
     return (
         <MenuItem
             {...itemProps}
-            key={suggestion.label}
+            key={suggestion.name}
             selected={isHighlighted}
             component="div"
             style={{
                 fontWeight: isSelected ? 500 : 400,
             }}>
-        {suggestion.label}
+        {suggestion.name}
         </MenuItem>
     );
 }
@@ -62,7 +62,7 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
         ? []
         : suggestions.filter(suggestion => {
             const keep =
-            count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+            count < 5 && suggestion.name.slice(0, inputLength).toLowerCase() === inputValue;
             if (keep) {
             count += 1;
             }
@@ -140,7 +140,7 @@ export default function DownshiftMultiple(props) {
         props.collection.map((suggestion,index) => {
             if (suggestion.id == item.id) {
                 newitem.id = suggestion.id
-                newitem.label = suggestion.label
+                newitem.label = suggestion.name
                 let newSelectedItem = [...selectedItem];
                 let validStateChecker = 0
                 selectedItem.map((item,index) => {
