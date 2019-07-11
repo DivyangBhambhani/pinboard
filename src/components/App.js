@@ -11,6 +11,8 @@ import firebaseApp from '../config/firebaseConfig';
 import history from './history';
 import Pins from './dashboard/pin/Pins';
 import Tags from './dashboard/tag/Tags';
+import store from "./store/index";
+import { Provider } from "react-redux";
 
 const PrivateRoute = ({ component: Component, userObj, isAuthed, ...rest }) => (
   <Route {...rest} render={function(props) {
@@ -66,18 +68,20 @@ class App extends React.Component {
         }
         return (
             <div className="App">
-                <BrowserRouter history={history}>
-                    <Switch>
-                        <Route exact path = '/' render={(props) => <Landing {...props} isAuthed={auth} />} />
-                        <Route path = '/login' render={(props) => <Login {...props} isAuthed={auth} />} />
-                        <Route path = '/signup' render={(props) => <SignUp {...props} isAuthed={auth} />} />
-                        <PrivateRoute path='/home' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Home} />
-                        <PrivateRoute exact path='/pins' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Pins} />
-                        <PrivateRoute path='/pins/:id' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={PinView} />
-                        <PrivateRoute path='/tags' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Tags} />
-                        <Route render = {() => (<p>Not Found</p>) } />
-                    </Switch>
-                </BrowserRouter>
+                <Provider store={store}>
+                    <BrowserRouter history={history}>
+                        <Switch>
+                            <Route exact path = '/' render={(props) => <Landing {...props} isAuthed={auth} />} />
+                            <Route path = '/login' render={(props) => <Login {...props} isAuthed={auth} />} />
+                            <Route path = '/signup' render={(props) => <SignUp {...props} isAuthed={auth} />} />
+                            <PrivateRoute path='/home' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Home} />
+                            <PrivateRoute exact path='/pins' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Pins} />
+                            <PrivateRoute path='/pins/:id' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={PinView} />
+                            <PrivateRoute path='/tags' userObj={user} onLogout={this.handleLogout} isAuthed={auth} component={Tags} />
+                            <Route render = {() => (<p>Not Found</p>) } />
+                        </Switch>
+                    </BrowserRouter>
+                </Provider>
             </div>
         );
     }

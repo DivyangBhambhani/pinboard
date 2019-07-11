@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,6 +22,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import {getUsers, getTags, getBoards} from  '../../utils/api';
 import EditViewSwitch from '../../common/EditViewSwitch';
 import PinBoardDz from '../../common/PinBoardDz';
+import {addPin} from "../../actions/index";
 
 const useStyles = makeStyles(theme => ({
   appBar: {
@@ -48,11 +50,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+function mapDispatchToProps(dispatch) {
+    return {
+        addPin: pin => dispatch(addPin(pin))   
+    };
+}
+
 const pinboardUsers = getUsers()
 const boards = getBoards()
 const tagCollection = getTags()
 
-export default function PinFormDrawer(props) {
+
+const PinFormDrawer = (props) => {
     const classes = useStyles();
 
     const [owner, setOwner] = React.useState('');
@@ -86,6 +95,7 @@ export default function PinFormDrawer(props) {
             setSwitchOn(props.mode == "view" ? false : true)
         }
     },[props])
+
 
     const handleCommand = (e) => {
         setCommand(e.target.value)
@@ -128,6 +138,15 @@ export default function PinFormDrawer(props) {
     }
 
     const handleSavePin = () => {
+        props.addPin(JSON.stringify({
+            pinTitle,
+            type: props.pinObj ? props.pinObj.type : '',
+            pinBody,
+            tags,
+            contributors,
+            owner,
+            board
+        }))
         localStorage.setItem('pin',JSON.stringify({
             pinTitle,
             type: props.pinObj ? props.pinObj.type : '',
@@ -301,3 +320,4 @@ export default function PinFormDrawer(props) {
         </div>
     );
 }
+export default connect(null, mapDispatchToProps)(PinFormDrawer);
